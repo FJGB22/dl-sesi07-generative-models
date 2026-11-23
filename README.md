@@ -1,6 +1,8 @@
 # Studi Komparatif Empiris Model Generatif — Fashion-MNIST
 
-Tugas Take-Home Deep Learning (D6421) Sesi 07 — **Jonathan Kuniardi (2802461832)**
+Tugas Take-Home Deep Learning (D6421) Sesi 07 — **Jonathan Kuniardi (2802461832), kelas LA01**
+
+Repositori: https://github.com/FJGB22/dl-sesi07-generative-models
 
 Implementasi PyTorch dan perbandingan terstandarisasi enam model generatif — **Vanilla AE, Sparse AE, VAE,
 Vanilla GAN (MLP), DCGAN, DDPM** — serta eksperimen pembuktian bahwa bobot dan fitur laten **MLP Classifier**
