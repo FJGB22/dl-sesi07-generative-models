@@ -1,0 +1,57 @@
+[mlp] ep  1 CE 0.5937 val_acc 0.8333
+[mlp] ep  2 CE 0.4108 val_acc 0.8589
+[mlp] ep  3 CE 0.3610 val_acc 0.8661
+[mlp] ep  4 CE 0.3373 val_acc 0.8637
+[mlp] ep  5 CE 0.3152 val_acc 0.8751
+[mlp] ep  6 CE 0.2973 val_acc 0.8750
+[mlp] ep  7 CE 0.2839 val_acc 0.8836
+[mlp] ep  8 CE 0.2743 val_acc 0.8806
+[mlp] ep  9 CE 0.2623 val_acc 0.8813
+[mlp] ep 10 CE 0.2547 val_acc 0.8873
+[mlp] ep 11 CE 0.2425 val_acc 0.8894
+[mlp] ep 12 CE 0.2341 val_acc 0.8859
+[mlp] ep 13 CE 0.2264 val_acc 0.8831
+[mlp] ep 14 CE 0.2193 val_acc 0.8930
+[mlp] ep 15 CE 0.2113 val_acc 0.8939
+[mlp] ep 16 CE 0.2047 val_acc 0.8953
+[mlp] ep 17 CE 0.1969 val_acc 0.8883
+[mlp] ep 18 CE 0.1929 val_acc 0.8896
+[mlp] ep 19 CE 0.1858 val_acc 0.8906
+[mlp] ep 20 CE 0.1823 val_acc 0.8883
+[mlp] ep 21 CE 0.1750 val_acc 0.8936
+[mlp] ep 22 CE 0.1695 val_acc 0.8931
+[mlp] ep 23 CE 0.1635 val_acc 0.8937
+[mlp] ep 24 CE 0.1601 val_acc 0.8969
+[mlp] ep 25 CE 0.1556 val_acc 0.8964
+[mlp] test accuracy = 0.8893
+[frozen-dec] ep  1 MSE 0.03622
+[frozen-dec] ep  2 MSE 0.02484
+[frozen-dec] ep  3 MSE 0.02250
+[frozen-dec] ep  4 MSE 0.02128
+[frozen-dec] ep  5 MSE 0.02046
+[frozen-dec] ep  6 MSE 0.01992
+[frozen-dec] ep  7 MSE 0.01949
+[frozen-dec] ep  8 MSE 0.01913
+[frozen-dec] ep  9 MSE 0.01882
+[frozen-dec] ep 10 MSE 0.01858
+[frozen-dec] ep 11 MSE 0.01839
+[frozen-dec] ep 12 MSE 0.01821
+[frozen-dec] ep 13 MSE 0.01806
+[frozen-dec] ep 14 MSE 0.01789
+[frozen-dec] ep 15 MSE 0.01778
+[frozen-dec] ep 16 MSE 0.01766
+[frozen-dec] ep 17 MSE 0.01758
+[frozen-dec] ep 18 MSE 0.01749
+[frozen-dec] ep 19 MSE 0.01741
+[frozen-dec] ep 20 MSE 0.01731
+[frozen-dec] ep 21 MSE 0.01724
+[frozen-dec] ep 22 MSE 0.01717
+[frozen-dec] ep 23 MSE 0.01711
+[frozen-dec] ep 24 MSE 0.01708
+[frozen-dec] ep 25 MSE 0.01701
+[frozen-dec] ep 26 MSE 0.01695
+[frozen-dec] ep 27 MSE 0.01691
+[frozen-dec] ep 28 MSE 0.01686
+[frozen-dec] ep 29 MSE 0.01683
+[frozen-dec] ep 30 MSE 0.01678
+{'weights': {'W1': {'shape': [256, 784], 'rel_fro_WtW_minus_I': 17.640226829038713, 'rank': 256, 'max_rank_possible': 256, 'null_space_dim_of_input': 528, 'sv_max': 14.041128914535463, 'sv_min': 0.3598051375467445, 'cond': 39.02425910389146}, 'W2': {'shape': [64, 256], 'rel_fro_WtW_minus_I': 4.694569807545916, 'rank': 64, 'max_rank_possible': 64, 'null_space_dim_of_input': 192, 'sv_max': 7.10713503581373, 'sv_min': 0.42786087625230573, 'cond': 16.610855140732045}, 'W3': {'shape': [10, 64], 'rel_fro_WtW_minus_I': 2.032048516630102, 'rank': 10, 'max_rank_possible': 10, 'null_space_dim_of_input': 54, 'sv_max': 3.494341539935437, 'sv_min': 1.1126765519584445, 'cond': 3.140482769934332}}, 'relu_zeroed_frac': {'layer1': 0.7414051294326782, 'layer2': 0.5147433280944824}, 'stage2': {'pixel_min': 0.0018165834480896592, 'pixel_max': 0.97612464427948, 'pixel_std_mean': 0.1398276388645172, 'vs_class_mean_image': {'mse': 0.11363375186920166, 'psnr': 9.565814018249512, 'ssim': 0.12154478987520681}}, 'stage3': {'transpose': {'mse': 0.3064718246459961, 'psnr': 5.1864190101623535, 'ssim': 0.06649147892464223}, 'pinv': {'mse': 0.1870884895324707, 'psnr': 7.937476634979248, 'ssim': 0.013500474415243264}, 'pixel_min': 0.0, 'pixel_max': 1.0}, 'stage4': {'frozen_mlp_decoder': {'mse': 0.017646031454205513, 'psnr': 18.314638137817383, 'ssim': 0.6580156916075879, 'intra_class_var_ratio': 0.6707215189933777, 'mlp_acc_on_recon': 0.8787142634391785}, 'vanilla_ae': {'mse': 0.006524386815726757, 'psnr': 22.9819278717041, 'ssim': 0.8292501370999708, 'intra_class_var_ratio': 0.8636953473091126, 'mlp_acc_on_recon': 0.8759999871253967}, 'decoder_train_mse': [0.03622388499762331, 0.024836952068975994, 0.022501417470829826, 0.02127985639018672, 0.02046129163673946, 0.019920363151601384, 0.01948647719834532, 0.019134610835994992, 0.018820138782262803, 0.018580537827951566, 0.018390510903937476, 0.018214296575103487, 0.01806215508069311, 0.017890906938484736, 0.017782700008579663, 0.017663968522633824, 0.017579874447413855, 0.017485787670527185, 0.01741146304990564, 0.017312245569058828, 0.01724457747382777, 0.017168489901082856, 0.017108013363821166, 0.017080503623400415, 0.017011346842561448, 0.016947476989456586, 0.016912120914884976, 0.016859696131731782, 0.016834700784512928, 0.0167771801756961]}, 'stage5': {'latent_zero_frac': 0.5147433280944824, 'negative_frac_in_samples': 0.19657030701637268, 'nn_dist_sampled_to_train': 17.722126007080078, 'nn_dist_test_to_train': 3.4394969940185547, 'mlp_conf_samples': {'mean_max_prob': 0.7649710178375244, 'mean_entropy': 0.6173366904258728, 'class_hist': [233, 57, 388, 323, 309, 180, 236, 77, 129, 68]}, 'mlp_conf_vae': {'mean_max_prob': 0.8177952766418457, 'mean_entropy': 0.4729614555835724, 'class_hist': [150, 160, 168, 291, 259, 242, 148, 213, 223, 146]}, 'mlp_conf_real': {'mean_max_prob': 0.9309478402137756, 'mean_entropy': 0.1763763129711151, 'class_hist': [172, 195, 196, 192, 236, 187, 192, 209, 218, 203]}}}

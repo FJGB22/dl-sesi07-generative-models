@@ -39,6 +39,16 @@ def load_models():
     return ms
 
 
+def cached_acts(key, x):
+    """Aktivasi Inception di-cache per kunci agar evaluasi ulang tidak menghitung ulang."""
+    path = os.path.join(CKPT, f"acts_{key}.npy")
+    if os.path.exists(path):
+        return np.load(path)
+    a = inception_acts(x)
+    np.save(path, a)
+    return a
+
+
 def class_coverage(mlp, x01):
     with torch.no_grad():
         p = F.softmax(mlp(x01), 1)
@@ -79,7 +89,10 @@ def main():
         S = {"vae": ms["vae"].decode(torch.randn(N_FID, LATENT, generator=g)),
              "gan": to01(ms["gan"](torch.randn(N_FID, Z_DIM, generator=g))),
              "dcgan": to01(ms["dcgan"](torch.randn(N_FID, Z_DIM, generator=g))),
-             "ddpm": to01(torch.load(os.path.join(CKPT, "ddpm_samples.pt"))[:N_FID])}
+             }
+        ddpm_path = os.path.join(CKPT, "ddpm_samples.pt")
+        if os.path.exists(ddpm_path):
+            S["ddpm"] = to01(torch.load(ddpm_path)[:N_FID])
         # suplemen: sampling Gaussian-fit pada ruang laten AE deterministik (latent voids) & MLP
         for k in ("ae", "sae"):
             z = ms[k].encode(Xte)
@@ -89,16 +102,21 @@ def main():
     torch.save({k: v[:64] for k, v in S.items()}, os.path.join(CKPT, "eval_samples.pt"))
 
     print("Inception: test reference ...", flush=True)
-    mu_ref, s_ref = act_stats(inception_acts(Xte))
-    mu_v, s_v = act_stats(inception_acts(Xva[:N_FID]))
+    mu_ref, s_ref = act_stats(cached_acts("real_test", Xte))
+    mu_v, s_v = act_stats(cached_acts("real_val", Xva[:N_FID]))
     R["fid"]["real_val_vs_test"] = frechet(mu_v, s_v, mu_ref, s_ref)
     print("FID real val", R["fid"]["real_val_vs_test"], flush=True)
     for k, v in S.items():
-        mu, s = act_stats(inception_acts(v))
+        mu, s = act_stats(cached_acts(k, v))
         R["fid"][k] = frechet(mu, s, mu_ref, s_ref)
         R["coverage"][k] = class_coverage(ms["mlp"], v)
         print("FID", k, R["fid"][k], R["coverage"][k], flush=True)
     R["coverage"]["real_test"] = class_coverage(ms["mlp"], Xte[:N_FID])
+
+    if "ddpm" not in S or os.environ.get("SKIP_LATENCY"):
+        save_json(R, "metrics_partial.json")
+        print("ddpm_samples.pt belum ada / SKIP_LATENCY: metrik parsial disimpan")
+        return
 
     # ---------------- latensi per batch 64 (CPU, 2 thread)
     x64 = Xte[:64]
