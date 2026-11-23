@@ -1,1 +1,12 @@
 [ddpm] ep   1 train 0.11164 val 0.36977 514.0s {'noise_mse': 0.11163852144990649}
+[ddpm] ep   2 train 0.05914 val 0.13314 496.3s {'noise_mse': 0.05914303243160248}
+[ddpm] ep   3 train 0.05257 val 0.08346 474.1s {'noise_mse': 0.052573080803666794}
+[ddpm] ep   4 train 0.04869 val 0.06651 469.7s {'noise_mse': 0.048685897933585305}
+[ddpm] ep   5 train 0.04657 val 0.05497 470.0s {'noise_mse': 0.04657019733105387}
+[ddpm] ep   6 train 0.04557 val 0.04946 481.0s {'noise_mse': 0.045571867685232845}
+[ddpm] ep   7 train 0.04445 val 0.05021 465.8s {'noise_mse': 0.044449279748967715}
+[ddpm] ep   8 train 0.04367 val 0.04371 470.5s {'noise_mse': 0.043670694632189616}
+[ddpm] ep   9 train 0.04290 val 0.04381 477.7s {'noise_mse': 0.04289916173900877}
+[ddpm] ep  10 train 0.04272 val 0.04354 482.3s {'noise_mse': 0.042718145885637826}
+[ddpm] ep  11 train 0.04190 val 0.04166 473.8s {'noise_mse': 0.04189885584797178}
+[ddpm] ep  12 train 0.04136 val 0.04023 467.0s {'noise_mse': 0.04135820004343987}

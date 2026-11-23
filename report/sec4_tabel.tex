@@ -1,0 +1,50 @@
+\section{Bagian IV --- Tabel Komparasi Metrik Numerik}
+
+\begin{table}[h]
+\centering\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\caption{Kompilasi kuantitatif pada Test Set (7.000 citra). Training time = rata-rata detik per epoch (CPU, 1 thread);
+latensi = ms per batch 64 sampel (CPU, 2 thread; AE/SAE: rekonstruksi, VAE/GAN/DCGAN/DDPM: sintesis dari prior).
+FID: 2.000 sampel vs statistik 7.000 citra test (FID citra riil validation vs test = \FIDreal).}
+\label{tab:main}
+\begin{tabular}{@{}lccccccccp{3.0cm}@{}}
+\toprule
+Arsitektur & Dim laten & Param (M) & Train/epoch (s) & Latensi (ms) & MSE $\downarrow$ & PSNR (dB) $\uparrow$ & SSIM $\uparrow$ & FID $\downarrow$ & Kestabilan training \\
+\midrule
+Vanilla AE & 64 & \PAE & \TAE & \LAE & \MSEAE & \PSNRAE & \SSIMAE & N/A (latent voids) & Stabil, konvergen monoton \\
+Sparse AE & 64 (ReLU, L1) & \PSAE & \TSAE & \LSAE & \MSESAE & \PSNRSAE & \SSIMSAE & N/A (latent voids) & Stabil, konvergen monoton \\
+VAE & 64 & \PVAE & \TVAE & \LVAE & \MSEVAE & \PSNRVAE & \SSIMVAE & \FIDVAE & Stabil, konvergen \\
+Vanilla GAN & 100 (prior) & \PGAN & \TGAN & \LGAN & N/A & N/A & N/A & \FIDGAN & Equilibrium semu $D\!\approx\!0{,}5$; sampel berbintik \\
+DCGAN & 100 (prior) & \PDCGAN & \TDCGAN & \LDCGAN & N/A & N/A & N/A & \FIDDCGAN & Cukup stabil, osilasi $\mathcal{L}_G$ lebih besar \\
+DDPM & 28$\times$28 & \PDDPM & \TDDPM & \LDDPM & N/A & N/A & N/A & \FIDDDPM & Sangat stabil, loss turun monoton \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering\footnotesize
+\caption{Metrik pendukung. \emph{Coverage} = entropi ternormalisasi distribusi kelas sampel menurut MLP Classifier
+(1 = 10 kelas merata; citra riil = \COVreal). Gaussian-fit = sampling $z\sim\mathcal{N}(\mu_z,\mathrm{diag}\,\sigma_z^2)$
+pada ruang laten model deterministik.}
+\label{tab:aux}
+\begin{tabular}{@{}lcccc|lcc@{}}
+\toprule
+Model generatif & FID & Coverage & Kelas min/maks & & Pembanding & FID & Coverage \\
+\midrule
+VAE & \FIDVAE & \COVVAE & \MINCVAE/\MAXCVAE & & Vanilla AE Gaussian-fit & \FIDaegauss & \COVAEgauss \\
+Vanilla GAN & \FIDGAN & \COVGAN & \MINCGAN/\MAXCGAN & & Sparse AE Gaussian-fit & \FIDsaegauss & \COVSAEgauss \\
+DCGAN & \FIDDCGAN & \COVDCGAN & \MINCDCGAN/\MAXCDCGAN & & Laten MLP Classifier (T5) & \FIDmlp & \COVmlp \\
+DDPM & \FIDDDPM & \COVDDPM & \MINCDDPM/\MAXCDDPM & & Citra riil (val) & \FIDreal & \COVreal \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Sparsitas kode.} Vanilla AE: \ZFAE\ komponen kode bernilai nol, \ACTAE\ unit aktif per sampel, \DEADAE\ unit mati.
+Sparse AE: \ZFSAE\ nol, hanya \ACTSAE\ dari 64 unit aktif per sampel, \DEADSAE\ unit tidak pernah aktif di test set.
+DDPM membutuhkan \LDDPMstep\ ms untuk \emph{satu} langkah denoising batch 64, sehingga 1000 langkah
+$\approx$\DDPMxGAN$\times$ lebih lambat daripada satu forward pass generator DCGAN.
+
+\textbf{Catatan pengukuran.} FID dengan $N=2.000$ bias ke atas dibanding protokol standar $N=50.000$ dan citra 28$\times$28
+di-upscale ke 299$\times$299, sehingga angka absolut tidak dapat dibandingkan langsung dengan literatur. Namun seluruh model
+memakai $N$, referensi, dan pra-pemrosesan yang sama, sehingga \emph{urutan} antarmodel valid. Training time diukur saat dua
+proses berjalan paralel pada 2 core (masing-masing 1 thread), sedangkan latensi diukur saat mesin tidak menjalankan proses lain.

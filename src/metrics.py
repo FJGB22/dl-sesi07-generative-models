@@ -51,10 +51,13 @@ def act_stats(acts):
 def frechet(mu1, s1, mu2, s2):
     """FID = ||mu1 - mu2||^2 + Tr(S1 + S2 - 2 (S1 S2)^{1/2})."""
     diff = mu1 - mu2
-    covmean, _ = linalg.sqrtm(s1.dot(s2), disp=False)
+    covmean = linalg.sqrtm(s1.dot(s2))          # SciPy >= 1.14 tidak lagi memakai argumen disp
+    if isinstance(covmean, tuple):
+        covmean = covmean[0]
     if not np.isfinite(covmean).all():
         off = np.eye(s1.shape[0]) * 1e-6
         covmean = linalg.sqrtm((s1 + off).dot(s2 + off))
+        covmean = covmean[0] if isinstance(covmean, tuple) else covmean
     covmean = covmean.real
     return float(diff.dot(diff) + np.trace(s1) + np.trace(s2) - 2 * np.trace(covmean))
 

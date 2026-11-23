@@ -60,7 +60,7 @@ def class_coverage(mlp, x01):
 
 
 def main():
-    torch.set_num_threads(2)
+    torch.set_num_threads(int(os.environ.get("EVAL_THREADS", "2")))
     set_seed(42)
     d = get_tensors("01")
     Xte, yte = d["test"]
@@ -129,6 +129,12 @@ def main():
     R["latency_ms_batch64"]["gan"] = latency_ms(lambda: ms["gan"](n64))
     R["latency_ms_batch64"]["dcgan"] = latency_ms(lambda: ms["dcgan"](n64))
     R["latency_ms_batch64"]["ddpm"] = latency_ms(lambda: ms["ddpm"].sample(64), n_warmup=0, n_runs=2)
+    # latensi batch 1 (skenario filter avatar real-time pada perangkat, Q6)
+    R["latency_ms_batch1"] = {
+        "vae": latency_ms(lambda: ms["vae"].decode(z64[:1]), n_runs=100),
+        "gan": latency_ms(lambda: ms["gan"](n64[:1]), n_runs=100),
+        "dcgan": latency_ms(lambda: ms["dcgan"](n64[:1]), n_runs=100),
+    }
     xt, tt = torch.randn(64, 1, 28, 28), torch.zeros(64, dtype=torch.long)
     R["latency_ms_batch64"]["ddpm_single_step"] = latency_ms(lambda: ms["ddpm"].net(xt, tt))
     print(R["latency_ms_batch64"], flush=True)

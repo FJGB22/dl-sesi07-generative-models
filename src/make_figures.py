@@ -58,8 +58,8 @@ def fig0_arch():
         ("VAE", ["x 784", "FC 256\nReLU", "μ, log σ²\n64+64", "z = μ+σ⊙ε", "FC 256→784\nSigmoid"], "BCE + KL"),
         ("Vanilla GAN", ["z 100", "FC 256-512\n-1024 LReLU", "G(z) 784\nTanh", "D: FC 512\n-256 LReLU", "logit\nD(x)"], "BCE (non-sat.)"),
         ("DCGAN", ["z 100×1×1", "ConvT 7×7\n256 BN ReLU", "ConvT 14×14\n128 BN ReLU", "ConvT 28×28\n1 Tanh", "D: Conv 64\n-128 BN → 1"], "BCE (non-sat.)"),
-        ("DDPM", ["x_t, t", "U-Net 28→14\n→7 (32/64/128)", "ResBlock +\nt-embed", "skip ↑14→28", "ε̂_θ(x_t,t)"], "‖ε − ε̂‖²"),
-        ("MLP Classifier", ["x 784", "FC 256\nReLU (W1)", "z_MLP 64\nReLU (W2)", "FC 10 (W3)", "softmax\nP(y|x)"], "Cross-Entropy"),
+        ("DDPM", ["x_t, t", "U-Net 28→14→7\nch 32/64/128", "ResBlock +\nt-embed", "skip ↑14→28", "ε̂_θ(x_t,t)"], "‖ε − ε̂‖²"),
+        ("MLP\nClassifier", ["x 784", "FC 256\nReLU (W1)", "z_MLP 64\nReLU (W2)", "FC 10 (W3)", "softmax\nP(y|x)"], "Cross-Entropy"),
     ]
     fig, ax = plt.subplots(figsize=(7.2, 5.0))
     ax.set_xlim(0, 10.6); ax.set_ylim(0, len(rows)); ax.axis("off")
@@ -115,15 +115,15 @@ def fig2_samples(M):
 # ------------------------------------------------------------------ Figur 3
 def fig3_mlp(E):
     D = torch.load(os.path.join(CKPT, "mlp_fig.pt"))
-    n = 8
+    n = 10
     fig = plt.figure(figsize=(7.2, 5.6))
     gs = fig.add_gridspec(7, 1, hspace=0.35)
     s4 = E["stage4"]
     items = [
         ("(1) Ground truth", D["x_orig"][:n]),
         ("(2a) W^T dari one-hot y_c\n(10 kelas, min-max)", minmax(D["x_cls"])),
-        ("(2b) W^T dari z_MLP\n(min-max per citra)", minmax(D["x_tp"][:n])),
         ("(2b) W^T dari z_MLP\n(skala asli Sigmoid)", D["x_tp"][:n]),
+        ("(2b') pseudo-invers W⁺\ndari z_MLP", D["x_pinv"][:n]),
         (f"(3) Frozen decoder z_MLP\nSSIM {s4['frozen_mlp_decoder']['ssim']:.3f}", D["x_fd"][:n]),
         (f"(3) Vanilla AE z_AE\nSSIM {s4['vanilla_ae']['ssim']:.3f}", D["x_ae"][:n]),
         ("(4) Sampling z~N(μ_z, σ_z²)\nruang laten MLP", D["x_samples"][:10]),
@@ -176,7 +176,9 @@ def fig4_interp(ms, Xte, yte, Xtr):
     fig, axs = plt.subplots(5, 1, figsize=(4.6, 4.6))
     for ax, (lab, imgs) in zip(axs, rows):
         row_axes(ax, grid(imgs, 1), lab)
-    axs[0].set_title("α = " + "     ".join(f"{a:.1f}" for a in alphas) + f"\n{CLASSES[A]}  →  {CLASSES[B]}", fontsize=7.5)
+    axs[0].set_title(f"{CLASSES[A]}  →  {CLASSES[B]}", fontsize=8)
+    axs[-1].set_xticks([14.5 + 29 * i for i in range(len(alphas))])
+    axs[-1].set_xticklabels([f"α={a:.1f}" for a in alphas], fontsize=7.5)
     fig.savefig(os.path.join(FIG, "fig4_interpolasi.png"))
     plt.close(fig)
     save_json(info, "interpolation.json")

@@ -1,0 +1,46 @@
+\documentclass[10.5pt,a4paper]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\usepackage{amsmath,amssymb}
+\usepackage{unicode-math}
+\setmathfont{TeX Gyre Termes Math}
+\usepackage{graphicx,booktabs,array,xcolor,caption,float,enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[indonesian]{babel}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{3pt}
+\setlength{\parindent}{0pt}
+\setlist{nosep,leftmargin=1.2em}
+\renewcommand{\figurename}{Gambar}
+\renewcommand{\tablename}{Tabel}
+\input{numbers.tex}
+
+\begin{document}
+\begin{center}
+{\large\bfseries Studi Komparatif Empiris Model Generatif: Autoencoder (Vanilla \& Sparse), GAN (Vanilla \& DCGAN),\\
+VAE, dan DDPM disertai Pembuktian Batasan Teoretis Model Klasifikasi untuk Image Generation}\\[4pt]
+{\small Laporan Tugas Take-Home --- Deep Learning (D6421) Sesi 07: Generative Models}
+\end{center}
+
+\section*{Bagian I --- Identitas Penulis dan Tautan Repositori}
+\begin{tabular}{@{}ll@{}}
+Nama Lengkap & Jonathan Kuniardi \\
+NIM & 2802461832 \\
+Kelas & \KELAS \\
+Program Studi & Computer Science (Intelligent Systems), BINUS University \\
+Dosen Pengampu & Muhammad Fikri Hasani, S.Kom., M.T. \& Tim Dosen D6421 \\
+Repositori GitHub & \url{\GITHUB} \\
+\end{tabular}
+
+\smallskip
+\textbf{Ringkasan.} Enam arsitektur generatif dan satu MLP Classifier dilatih pada Fashion-MNIST dengan split 80/10/10
+dan seed 42 yang identik. \ABSTRAK
+
+\input{sec2_teori.tex}
+\input{sec3_mlp.tex}
+\input{sec4_tabel.tex}
+\input{sec5_visual.tex}
+\input{sec6_diskusi.tex}
+
+\end{document}
