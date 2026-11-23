@@ -8,3 +8,10 @@
 [gan] ep   8 LD 1.130 LG 1.280 D(x) 0.612 D(G(z)) 0.395 |gradG| 2.400 17.1s
 [gan] ep   9 LD 1.164 LG 1.253 D(x) 0.601 D(G(z)) 0.403 |gradG| 2.332 13.7s
 [gan] ep  10 LD 1.156 LG 1.225 D(x) 0.600 D(G(z)) 0.404 |gradG| 2.182 13.2s
+[gan] ep  11 LD 1.197 LG 1.185 D(x) 0.587 D(G(z)) 0.418 |gradG| 2.136 13.5s
+[gan] ep  12 LD 1.191 LG 1.169 D(x) 0.588 D(G(z)) 0.416 |gradG| 1.990 13.8s
+[gan] ep  13 LD 1.194 LG 1.125 D(x) 0.586 D(G(z)) 0.419 |gradG| 1.800 13.6s
+[gan] ep  14 LD 1.213 LG 1.100 D(x) 0.578 D(G(z)) 0.425 |gradG| 1.710 13.7s
+[gan] ep  15 LD 1.218 LG 1.104 D(x) 0.577 D(G(z)) 0.427 |gradG| 1.697 13.9s
+[gan] ep  16 LD 1.213 LG 1.078 D(x) 0.576 D(G(z)) 0.427 |gradG| 1.576 13.8s
+[gan] ep  17 LD 1.219 LG 1.076 D(x) 0.575 D(G(z)) 0.428 |gradG| 1.555 13.7s
