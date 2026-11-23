@@ -10,4 +10,5 @@ python -m src.train --model dcgan --epochs 20
 python -m src.train --model ddpm  --epochs 12
 python -m src.sample_ddpm --n 2000     # 1000 langkah reverse diffusion
 python -m src.evaluate                 # tabel metrik -> outputs/results/metrics.json
+python -m src.anomaly_proxy            # eksperimen pendukung Q6(1)
 python -m src.make_figures             # Figur 0-5 -> outputs/figures/

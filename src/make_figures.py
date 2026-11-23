@@ -58,7 +58,7 @@ def fig0_arch():
         ("VAE", ["x 784", "FC 256\nReLU", "μ, log σ²\n64+64", "z = μ+σ⊙ε", "FC 256→784\nSigmoid"], "BCE + KL"),
         ("Vanilla GAN", ["z 100", "FC 256-512\n-1024 LReLU", "G(z) 784\nTanh", "D: FC 512\n-256 LReLU", "logit\nD(x)"], "BCE (non-sat.)"),
         ("DCGAN", ["z 100×1×1", "ConvT 7×7\n256 BN ReLU", "ConvT 14×14\n128 BN ReLU", "ConvT 28×28\n1 Tanh", "D: Conv 64\n-128 BN → 1"], "BCE (non-sat.)"),
-        ("DDPM", ["x_t, t", "U-Net 28→14→7\nch 32/64/128", "ResBlock +\nt-embed", "skip ↑14→28", "ε̂_θ(x_t,t)"], "‖ε − ε̂‖²"),
+        ("DDPM", ["x_t, t", "U-Net\n28→14→7", "ResBlock +\nt-embed", "skip ↑14→28", "ε̂_θ(x_t,t)"], "‖ε − ε̂‖²"),
         ("MLP\nClassifier", ["x 784", "FC 256\nReLU (W1)", "z_MLP 64\nReLU (W2)", "FC 10 (W3)", "softmax\nP(y|x)"], "Cross-Entropy"),
     ]
     fig, ax = plt.subplots(figsize=(7.2, 5.0))
@@ -190,8 +190,8 @@ def fig4_interp(ms, Xte, yte, Xtr):
 # ------------------------------------------------------------------ Figur 5
 def fig5_loss():
     H = {k: load_json(f"history_{k}.json") for k in ("ae", "sae", "vae", "gan", "dcgan", "ddpm")}
-    fig = plt.figure(figsize=(7.2, 6.4))
-    gs = fig.add_gridspec(3, 3, height_ratios=[1, 1, 1.15], hspace=0.55, wspace=0.32)
+    fig = plt.figure(figsize=(7.2, 7.6))
+    gs = fig.add_gridspec(3, 3, height_ratios=[1, 1, 1.7], hspace=0.5, wspace=0.35)
     for i, k in enumerate(("ae", "sae", "vae")):
         ax = fig.add_subplot(gs[0, i])
         h = H[k]
@@ -211,13 +211,13 @@ def fig5_loss():
         ax.plot(it, h["iter_loss_G"], color=COL[k], lw=.5, alpha=.5)
         ax.plot(h["epoch"], h["loss_D"], color="#000", lw=1.4, label="L_D (rata-rata epoch)")
         ax.plot(h["epoch"], h["loss_G"], color=COL[k], lw=1.4, label="L_G (rata-rata epoch)")
-        ax.set_title(f"{NAME[k]}: loss G & D (tipis = per 20 iterasi)")
+        ax.set_title(f"{NAME[k]}: L_G & L_D")
         ax.set_xlabel("epoch"); ax.legend(fontsize=6.5); ax.grid(alpha=.3)
     ax = fig.add_subplot(gs[1, 2])
     h = H["ddpm"]
     ax.plot(h["epoch"], h["train"], color=COL["ddpm"], label="train")
     ax.plot(h["epoch"], h["val"], "--", color=COL["ddpm"], label="val (EMA)")
-    ax.set_title("DDPM: ‖ε − ε̂_θ‖² (noise MSE)"); ax.set_xlabel("epoch"); ax.legend(fontsize=6.5); ax.grid(alpha=.3)
+    ax.set_title("DDPM: noise MSE"); ax.set_xlabel("epoch"); ax.legend(fontsize=6.5); ax.grid(alpha=.3)
     traj = torch.load(os.path.join(CKPT, "ddpm_traj.pt"))
     steps = sorted(traj.keys(), reverse=True)
     ax = fig.add_subplot(gs[2, :])
@@ -225,7 +225,7 @@ def fig5_loss():
     img = torch.stack(cols, 1).reshape(-1, 1, 28, 28)            # baris = sampel, kolom = langkah
     ax.imshow(grid(img, 4), cmap="gray", vmin=0, vmax=1, interpolation="nearest")
     ax.set_xticks([14.5 + 29 * i for i in range(len(steps))])
-    ax.set_xticklabels([f"t={s}" for s in steps], fontsize=7)
+    ax.set_xticklabels([f"t={s}" for s in steps], fontsize=6.5)
     ax.set_yticks([])
     ax.set_title("DDPM reverse diffusion trajectory  x_T → x_0 (4 sampel)")
     fig.savefig(os.path.join(FIG, "fig5_loss_ddpm.png"))

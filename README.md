@@ -30,6 +30,7 @@ src/
   sample_ddpm.py      sampling reverse diffusion untuk FID & trajectory
   evaluate.py         tabel metrik -> outputs/results/metrics.json
   make_figures.py     Figur 0–5 -> outputs/figures/
+  anomaly_proxy.py    eksperimen pendukung Q6: deteksi cacat sintetis via reconstruction error
 notebooks/colab_run.ipynb   menjalankan seluruh pipeline di Google Colab (GPU)
 run_all.sh                  pipeline lengkap berurutan
 report/                     sumber LaTeX laporan
@@ -54,7 +55,9 @@ python -m src.train --model dcgan --epochs 20
 python -m src.train --model ddpm  --epochs 12
 python -m src.sample_ddpm --n 2000
 python -m src.evaluate
+python -m src.anomaly_proxy
 python -m src.make_figures
+python report/build_numbers.py   # angka laporan dari JSON, lalu kompilasi report/main.tex
 ```
 Dataset diunduh otomatis lewat `torchvision.datasets.FashionMNIST` ke `data/`. GPU dipakai otomatis bila tersedia;
 pada CPU, argumen `--threads N` membatasi jumlah thread. Di Google Colab, buka `notebooks/colab_run.ipynb`
@@ -63,6 +66,19 @@ dan pilih runtime T4 GPU.
 Hasil yang dilaporkan dijalankan pada CPU 2-core (tanpa GPU); total waktu ±3 jam, didominasi training dan
 sampling DDPM 1000 langkah.
 
-## Hasil
+## Hasil ringkas (Test Set, CPU 2-core)
+| Model | Train/epoch (s) | Latensi batch 64 (ms) | MSE | PSNR (dB) | SSIM | FID (2k sampel) |
+|---|---|---|---|---|---|---|
+| Vanilla AE | 2.7 | 0.37 | 0.0065 | 22.98 | 0.829 | – |
+| Sparse AE | 3.0 | 0.36 | 0.0097 | 21.12 | 0.762 | – |
+| VAE | 4.0 | 0.18 | 0.0132 | 19.64 | 0.708 | 89.2 |
+| Vanilla GAN | 14.6 | 1.20 | – | – | – | 124.6 |
+| DCGAN | 182.0 | 22.19 | – | – | – | 31.9 |
+| DDPM | 478.5 | 93820.89 | – | – | – | 28.0 |
+
+FID citra riil (val vs test) = 8.4. MLP Classifier: akurasi test 88.93%;
+frozen-latent decoder PSNR 18.31 dB vs Vanilla AE 22.98 dB;
+sampling ruang laten MLP FID 149.1.
+
 Angka lengkap ada di `outputs/results/metrics.json` dan `outputs/results/mlp_experiments.json`;
 ringkasan dan analisis ada di laporan PDF.

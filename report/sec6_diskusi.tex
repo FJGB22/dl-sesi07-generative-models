@@ -24,7 +24,7 @@ posisi A \emph{atau} B, bukan setengah di keduanya''. GAN tidak memiliki target 
 membedakan $G(z)$ dari data, sehingga meminimalkan (secara aproksimasi) $D_{\text{JS}}(p_{\text{data}}\Vert p_g)$. Citra rata-rata
 yang buram berada di luar support $p_{\text{data}}$, sehingga mudah dikenali $D$. Divergensi ini \emph{mode-seeking}: generator
 didorong memilih satu mode yang tajam daripada rata-rata banyak mode. Inilah sebabnya DCGAN menghasilkan kontur tajam
-(Gambar~\ref{fig:samples}C). Vanilla GAN memang tajam, tetapi derau bintiknya menunjukkan sisi lain: $D$ berbasis MLP tidak
+(Figur 2C). Vanilla GAN memang tajam, tetapi derau bintiknya menunjukkan sisi lain: $D$ berbasis MLP tidak
 dapat mendeteksi inkonsistensi lokal antarpiksel, sehingga $G$ tidak pernah dihukum karenanya (lihat Q3).
 
 \textbf{Struktur fitur Sparse AE vs Vanilla AE.} Pada Vanilla AE, \ZFAE\ komponen kode bernilai nol (kode linear, padat):
@@ -40,7 +40,7 @@ $D_{\text{JS}}$ jenuh di $\log2$ dan tidak memberi arah. \emph{Mode collapse} te
 yang menipu $D$ saat itu dan memetakan banyak $z$ ke sana. Dalam eksperimen ini, kedua GAN memakai loss non-saturating dan
 Adam $\beta_1=0{,}5$. Hasilnya, \textbf{tidak ada mode collapse tingkat kelas}: coverage Vanilla GAN \COVGAN\ dan DCGAN \COVDCGAN,
 setara citra riil (\COVreal). Kegagalan Vanilla GAN muncul dalam bentuk lain, yaitu \emph{equilibrium semu}: $D(x)$ dan
-$D(G(z))$ mendekati 0,5 (\DRGAN/\DFGAN) dan norma gradien $G$ menurun dari \GNGANfirst\ menjadi \GNGANlast, padahal sampel
+$D(G(z))$ mendekati 0,5 (\DRGAN/\DFGAN) dan norma gradien $G$ turun dari puncak \GNGANfirst\ menjadi \GNGANlast, padahal sampel
 masih berbintik (FID \FIDGAN). $D$ berbasis MLP memperlakukan 784 piksel sebagai vektor tanpa struktur spasial, sehingga
 $D$ tidak dapat membedakan derau lokal. Akibatnya sinyal gradien ke $G$ melemah sebelum kualitas tercapai; ini adalah bentuk
 praktis \emph{vanishing learning signal}. DCGAN memitigasinya melalui prinsip Radford dkk.:
@@ -58,7 +58,7 @@ monoton tanpa osilasi (\DDPMfirst$\to$\DDPMlast), dan val loss ber-EMA mengikuti
 \textbf{Trilemma.} \TrilemmaText
 
 \subsection*{Q4 --- Struktur latent space dan interpolasi}
-Seperti terlihat pada Gambar~\ref{fig:interp}, Vanilla AE dan Sparse AE menghasilkan \emph{ghosting}: superposisi celana dan tas
+Seperti terlihat pada Figur 4, Vanilla AE dan Sparse AE menghasilkan \emph{ghosting}: superposisi celana dan tas
 pada $\alpha=0{,}4$--$0{,}6$, dengan artefak pita dan bercak. Penyebabnya, objektif rekonstruksi hanya peduli pada titik-titik
 $f(x_i)$ yang dilihat saat training. Kode dari kelas berbeda tersebar di klaster yang terpisah, dan ruang di antaranya tidak pernah
 diberi makna (\emph{latent voids}). Decoder ReLU berperilaku piecewise-linear di wilayah tersebut, sehingga keluarannya mendekati
@@ -74,7 +74,7 @@ agar setiap titik di sana menghasilkan citra yang dinilai riil oleh $D$.
 \subsection*{Q5 --- Mengapa bobot dan fitur laten MLP Classifier tidak dapat langsung men-generate citra}
 Ketiga jalur pada Bagian III gagal karena tiga alasan yang saling menguatkan. \textbf{(a) $P(y|x)$:} Cross-Entropy hanya menuntut
 $z_{\text{MLP}}$ cukup untuk $y$. Hal ini terlihat dari frozen decoder: akurasi klasifikasi rekonstruksinya (\FdAcc\%) setara AE
-(\AeAcc\%), tetapi varians intra-kelas tinggal \FdVar\ (AE \AeVar), dan tulisan, motif, serta pola hilang (Gambar~\ref{fig:mlp}, baris 3).
+(\AeAcc\%), tetapi varians intra-kelas tinggal \FdVar\ (AE \AeVar), dan tulisan, motif, serta pola hilang (Figur 3, baris 3).
 Informasi yang tidak relevan untuk label telah dibuang dan tidak dapat dipulihkan oleh decoder apa pun.
 \textbf{(b) $W^{\top}W\neq I$:} $W_1$ berukuran 256$\times$784 memiliki ruang nol 528 dimensi dan $\lVert W_1^{\top}W_1-I\rVert_F/\lVert I\rVert_F=\WoneOrth$.
 Transpos hanya memproyeksikan balik ke ruang baris, tanpa skala yang benar, sehingga pra-aktivasi Sigmoid membesar dan citra jenuh

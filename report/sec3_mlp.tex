@@ -44,12 +44,12 @@ T4: Vanilla AE ($z_{\text{AE}}\in\mathbb{R}^{64}$) & \AeMSE & \AePSNR & \AeSSIM 
 \end{table}
 
 \textbf{Tahap 2 (transpos dari vektor kelas).} $\hat{x}=\mathrm{Sigmoid}(W_1^{\top}\mathrm{ReLU}(W_2^{\top}\mathrm{ReLU}(W_3^{\top}y_c)))$
-menghasilkan pola bercak bertekstur frekuensi tinggi (Gambar~\ref{fig:mlp}, baris 2a). Terhadap citra rata-rata
+menghasilkan pola bercak bertekstur frekuensi tinggi (Figur 3, baris 2a). Terhadap citra rata-rata
 tiap kelas, SSIM hanya \TtwoSSIM: siluet kelas tidak muncul karena tiap baris $W_1$ adalah \emph{detektor} fitur
 diskriminatif (positif dan negatif bercampur), bukan potongan citra.
 
 \textbf{Tahap 3 (transpos dari fitur laten citra uji).} Proyeksi $\mathrm{Sigmoid}(W_1^{\top}\mathrm{ReLU}(W_2^{\top}z_{\text{MLP}}))$
-menghasilkan pola biner acak yang jenuh (piksel hampir semuanya 0 atau 1; Gambar~\ref{fig:mlp} baris 2b) dengan SSIM
+menghasilkan pola biner acak yang jenuh (piksel hampir semuanya 0 atau 1; Figur 3 baris 2b) dengan SSIM
 \TthreeSSIM\ terhadap citra asli. $W^{\top}$ tidak mempertahankan skala---norma singular $W_1$ hingga \WoneSVmax---sehingga
 pra-aktivasi Sigmoid membesar jauh di luar rentang linear. Bahkan pseudo-invers Moore--Penrose $W^{+}$, yang merupakan
 solusi kuadrat-terkecil terbaik untuk sistem linear, hanya mencapai SSIM \TpinvSSIM: informasi yang telah dibuang oleh ReLU
@@ -66,7 +66,7 @@ Menariknya, akurasi MLP pada rekonstruksi frozen decoder (\FdAcc\%) setara denga
 \textbf{Tahap 5 (sampling dari ruang laten MLP).} 2.000 sampel $z_{\text{rand}}\sim\mathcal{N}(\mu_z,\mathrm{diag}\,\sigma_z^2)$
 diteruskan ke decoder Tahap 4. Jarak rata-rata sampel ke kode training terdekat adalah \NNrand, sedangkan kode test riil
 hanya \NNreal\ (\NNratio$\times$ lebih jauh): sampel jatuh di wilayah kosong. Hasilnya berupa citra kabur campuran
-beberapa kelas (Gambar~\ref{fig:mlp}, baris 4); entropi prediksi MLP pada sampel ini \EntMLP\ nat, lebih tinggi daripada
+beberapa kelas (Figur 3, baris 4); entropi prediksi MLP pada sampel ini \EntMLP\ nat, lebih tinggi daripada
 sampel VAE (\EntVAE) dan citra riil (\EntReal), serta distribusi kelasnya timpang (kelas Trouser hanya \TrouserMLP\ dari 2.000).
 FID sampel ini adalah \FIDmlp, jauh di atas VAE (\FIDvae).
 

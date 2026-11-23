@@ -11,12 +11,12 @@ dan dikonversi kembali ke $[0,1]$ sebelum evaluasi. Seluruh eksperimen dijalanka
 sehingga ukuran model dan jumlah epoch dipilih agar seluruh pipeline dapat direproduksi dalam beberapa jam.
 
 \subsection{Diagram skematik arsitektur}
-Gambar~\ref{fig:arch} merangkum ketujuh arsitektur. Encoder Vanilla AE, Sparse AE, VAE, dan MLP Classifier
+Figur 0 merangkum ketujuh arsitektur. Encoder Vanilla AE, Sparse AE, VAE, dan MLP Classifier
 sengaja dibuat identik ($784\!\to\!256\!\to\!64$) sehingga perbedaan perilaku hanya berasal dari \emph{fungsi objektif}.
 
 \begin{figure}[h]
 \centering\includegraphics[width=0.93\linewidth]{../outputs/figures/fig0_arsitektur.png}
-\caption{Skema arsitektur ketujuh model (blok = lapisan, teks miring = fungsi loss). FC = fully connected,
+\caption{\textbf{Figur 0.} Skema arsitektur ketujuh model (blok = lapisan, teks miring = fungsi loss). FC = fully connected,
 ConvT = transposed convolution, BN = BatchNorm, LReLU = LeakyReLU(0,2).}
 \label{fig:arch}
 \end{figure}

@@ -111,7 +111,7 @@ def main():
         K = k.upper()
         m[f"DR{K}"] = f(h["D_real"][-1], 3)
         m[f"DF{K}"] = f(h["D_fake"][-1], 3)
-        m[f"GN{K}first"] = f(h["gradG"][0], 2)
+        m[f"GN{K}first"] = f(max(h["gradG"]), 2)
         m[f"GN{K}last"] = f(h["gradG"][-1], 2)
         it = h["iter_loss_G"]
         tail = it[len(it) // 2:]
@@ -173,7 +173,7 @@ def main():
         f"Latensi per citra (batch 1, CPU 2 thread) adalah VAE {f(b1['vae'][0], 2)} ms, Vanilla GAN {f(b1['gan'][0], 2)} ms, "
         f"dan DCGAN {f(b1['dcgan'][0], 2)} ms; untuk batch 64 masing-masing {f(lat['vae'][0], 2)}, {f(lat['gan'][0], 2)}, "
         f"dan {f(lat['dcgan'][0], 2)} ms. Ketiganya jauh di bawah anggaran 30 ms karena sama-sama single-pass, sedangkan DDPM "
-        f"(~{f(lat['ddpm'][0] / 64, 0)} ms per citra) mustahil dipakai. Di antara kandidat yang memenuhi latensi, DCGAN memberi kualitas "
+        f"(sekitar {f(lat['ddpm'][0] / 64, 0)} ms per citra) mustahil dipakai. Di antara kandidat yang memenuhi latensi, DCGAN memberi kualitas "
         f"terbaik (FID {f(fid['dcgan'], 1)} vs VAE {f(fid['vae'], 1)} dan Vanilla GAN {f(fid['gan'], 1)}). Konvolusi juga lebih ramah "
         "akselerator mobile (NPU/GPU) dan parameternya dapat dikuantisasi. Vanilla GAN tidak direkomendasikan karena artefak bintiknya "
         "sangat terlihat pada wajah/avatar. VAE cocok bila yang dibutuhkan adalah kontrol laten yang halus (misalnya slider atribut), "

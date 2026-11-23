@@ -37,21 +37,21 @@
 \newcommand{\TrouserMLP}{57}
 \newcommand{\FIDmlp}{149{,}1}
 \newcommand{\FIDvae}{89{,}2}
-\newcommand{\TAE}{1{,}0}
-\newcommand{\LAE}{1{,}00}
-\newcommand{\PAE}{1{,}00}
+\newcommand{\TAE}{2{,}7}
+\newcommand{\LAE}{0{,}37}
+\newcommand{\PAE}{0{,}44}
 \newcommand{\MSEAE}{0{,}0065}
 \newcommand{\PSNRAE}{22{,}98}
 \newcommand{\SSIMAE}{0{,}829}
-\newcommand{\TSAE}{1{,}0}
-\newcommand{\LSAE}{1{,}00}
-\newcommand{\PSAE}{1{,}00}
+\newcommand{\TSAE}{3{,}0}
+\newcommand{\LSAE}{0{,}36}
+\newcommand{\PSAE}{0{,}44}
 \newcommand{\MSESAE}{0{,}0097}
 \newcommand{\PSNRSAE}{21{,}12}
 \newcommand{\SSIMSAE}{0{,}762}
-\newcommand{\TVAE}{1{,}0}
-\newcommand{\LVAE}{1{,}00}
-\newcommand{\PVAE}{1{,}00}
+\newcommand{\TVAE}{4{,}0}
+\newcommand{\LVAE}{0{,}18}
+\newcommand{\PVAE}{0{,}45}
 \newcommand{\MSEVAE}{0{,}0132}
 \newcommand{\PSNRVAE}{19{,}64}
 \newcommand{\SSIMVAE}{0{,}708}
@@ -59,29 +59,29 @@
 \newcommand{\COVVAE}{0{,}990}
 \newcommand{\MINCVAE}{138}
 \newcommand{\MAXCVAE}{292}
-\newcommand{\TGAN}{1{,}0}
-\newcommand{\LGAN}{1{,}00}
-\newcommand{\PGAN}{1{,}00}
+\newcommand{\TGAN}{14{,}6}
+\newcommand{\LGAN}{1{,}20}
+\newcommand{\PGAN}{1{,}49}
 \newcommand{\FIDGAN}{124{,}6}
 \newcommand{\COVGAN}{0{,}991}
 \newcommand{\MINCGAN}{113}
 \newcommand{\MAXCGAN}{267}
-\newcommand{\TDCGAN}{1{,}0}
-\newcommand{\LDCGAN}{1{,}00}
-\newcommand{\PDCGAN}{1{,}00}
+\newcommand{\TDCGAN}{182{,}0}
+\newcommand{\LDCGAN}{22{,}19}
+\newcommand{\PDCGAN}{1{,}78}
 \newcommand{\FIDDCGAN}{31{,}9}
 \newcommand{\COVDCGAN}{0{,}998}
 \newcommand{\MINCDCGAN}{171}
 \newcommand{\MAXCDCGAN}{230}
-\newcommand{\TDDPM}{1{,}0}
-\newcommand{\LDDPM}{100000}
-\newcommand{\PDDPM}{1{,}00}
-\newcommand{\FIDDDPM}{25{,}0}
-\newcommand{\COVDDPM}{0{,}998}
-\newcommand{\MINCDDPM}{171}
-\newcommand{\MAXCDDPM}{230}
-\newcommand{\LDDPMstep}{100{,}0}
-\newcommand{\LVAErec}{1{,}00}
+\newcommand{\TDDPM}{478{,}5}
+\newcommand{\LDDPM}{93821}
+\newcommand{\PDDPM}{1{,}25}
+\newcommand{\FIDDDPM}{28{,}0}
+\newcommand{\COVDDPM}{0{,}992}
+\newcommand{\MINCDDPM}{127}
+\newcommand{\MAXCDDPM}{267}
+\newcommand{\LDDPMstep}{92{,}4}
+\newcommand{\LVAErec}{0{,}37}
 \newcommand{\FIDreal}{8{,}4}
 \newcommand{\FIDaegauss}{206{,}7}
 \newcommand{\FIDsaegauss}{152{,}4}
@@ -89,7 +89,7 @@
 \newcommand{\COVSAEgauss}{0{,}956}
 \newcommand{\COVmlp}{0{,}929}
 \newcommand{\COVreal}{0{,}998}
-\newcommand{\DDPMxGAN}{100000}
+\newcommand{\DDPMxGAN}{4227}
 \newcommand{\ZFAE}{0{,}0\%}
 \newcommand{\ACTAE}{64{,}0}
 \newcommand{\DEADAE}{0}
@@ -114,7 +114,7 @@
 \newcommand{\STEPDCGAN}{0{,}0865}
 \newcommand{\DRGAN}{0{,}533}
 \newcommand{\DFGAN}{0{,}468}
-\newcommand{\GNGANfirst}{1{,}44}
+\newcommand{\GNGANfirst}{4{,}01}
 \newcommand{\GNGANlast}{1{,}07}
 \newcommand{\GSTDGAN}{0{,}075}
 \newcommand{\DRDCGAN}{0{,}552}
@@ -124,9 +124,9 @@
 \newcommand{\GSTDDCGAN}{0{,}201}
 \newcommand{\AEtrain}{0{,}0063}
 \newcommand{\AEval}{0{,}0066}
-\newcommand{\BoneVAE}{0{,}50}
-\newcommand{\BoneGAN}{0{,}50}
-\newcommand{\BoneDCGAN}{0{,}50}
+\newcommand{\BoneVAE}{0{,}04}
+\newcommand{\BoneGAN}{0{,}21}
+\newcommand{\BoneDCGAN}{1{,}60}
 \newcommand{\AUCAE}{0{,}762}
 \newcommand{\ERRNAE}{0{,}0065}
 \newcommand{\ERRDAE}{0{,}0115}
@@ -141,10 +141,10 @@
 \newcommand{\DDPMfirst}{0{,}1116}
 \newcommand{\DDPMlast}{0{,}0414}
 \newcommand{\DDPMval}{0{,}0402}
-\newcommand{\QoneFID}{FID dari prior $\mathcal{N}(0,I)$ (makin kecil makin baik) berurutan: DDPM (25{,}0) $<$ DCGAN (31{,}9) $<$ VAE (89{,}2) $<$ Vanilla GAN (124{,}6); sebagai batas bawah, FID antara dua himpunan citra riil adalah 8{,}4.}
-\newcommand{\FigTwoText}{Sampel VAE (A) memiliki siluet benar dan beragam tetapi buram serta kontrasnya rendah: decoder mengeluarkan $\mathbb{E}[x|z]$ sehingga tekstur kain hilang. Vanilla GAN (B) menghasilkan siluet tajam dan berkontras tinggi, tetapi setiap piksel berbintik seperti derau garam-merica, karena generator FC tidak memiliki bias korelasi spasial antarpiksel; inilah sebabnya FID-nya (124{,}6) bahkan lebih buruk daripada VAE (89{,}2). DCGAN (C) menghasilkan kontur bersih, permukaan halus, dan detail seperti tali tas serta sol sepatu. DDPM (D) menghasilkan sampel dengan tekstur dan detail lokal paling alami serta FID terbaik (25{,}0). Dari sisi keragaman, keempat model menutup 10 kelas hampir merata (coverage 0{,}990--0{,}998), sehingga tidak ada mode collapse tingkat kelas.}
-\newcommand{\TrilemmaText}{Generative trilemma (Xiao dkk., 2022) menyatakan bahwa sulit mendapatkan sekaligus kualitas sampel tinggi, sampling cepat, dan mode coverage. Hasil kami mengonfirmasinya. VAE: cepat (1{,}00 ms/64) dan coverage tinggi, tetapi kualitas rendah (FID 89{,}2). DCGAN: cepat (1{,}00 ms/64) dan berkualitas (FID 31{,}9); coverage tingkat kelas baik, tetapi secara teoretis rentan mode dropping karena divergensi mode-seeking dan tidak memiliki likelihood untuk memverifikasinya. DDPM: coverage dijamin oleh objektif likelihood-bound dan FID 25{,}0, tetapi sampling 1000 langkah butuh 100{,}0 detik per batch 64, yaitu 100000$\times$ lebih lambat daripada DCGAN. Latensi DDPM berbanding lurus dengan jumlah langkah $T$; inilah harga dari kestabilan dan coverage.}
-\newcommand{\AvatarText}{Latensi per citra (batch 1, CPU 2 thread) adalah VAE 0{,}50 ms, Vanilla GAN 0{,}50 ms, dan DCGAN 0{,}50 ms; untuk batch 64 masing-masing 1{,}00, 1{,}00, dan 1{,}00 ms. Ketiganya jauh di bawah anggaran 30 ms karena sama-sama single-pass, sedangkan DDPM (~1562 ms per citra) mustahil dipakai. Di antara kandidat yang memenuhi latensi, DCGAN memberi kualitas terbaik (FID 31{,}9 vs VAE 89{,}2 dan Vanilla GAN 124{,}6). Konvolusi juga lebih ramah akselerator mobile (NPU/GPU) dan parameternya dapat dikuantisasi. Vanilla GAN tidak direkomendasikan karena artefak bintiknya sangat terlihat pada wajah/avatar. VAE cocok bila yang dibutuhkan adalah kontrol laten yang halus (misalnya slider atribut), dengan konsekuensi hasil lebih buram. Untuk produk nyata, generator DCGAN perlu dikondisikan pada citra input (image-to-image).}
+\newcommand{\QoneFID}{FID dari prior $\mathcal{N}(0,I)$ (makin kecil makin baik) berurutan: DDPM (28{,}0) $<$ DCGAN (31{,}9) $<$ VAE (89{,}2) $<$ Vanilla GAN (124{,}6); sebagai batas bawah, FID antara dua himpunan citra riil adalah 8{,}4.}
+\newcommand{\FigTwoText}{Sampel VAE (A) memiliki siluet benar dan beragam tetapi buram serta kontrasnya rendah: decoder mengeluarkan $\mathbb{E}[x|z]$ sehingga tekstur kain hilang. Vanilla GAN (B) menghasilkan siluet tajam dan berkontras tinggi, tetapi setiap piksel berbintik seperti derau garam-merica, karena generator FC tidak memiliki bias korelasi spasial antarpiksel; inilah sebabnya FID-nya (124{,}6) bahkan lebih buruk daripada VAE (89{,}2). DCGAN (C) menghasilkan kontur bersih, permukaan halus, dan detail seperti tali tas serta sol sepatu. DDPM (D) menghasilkan sampel dengan tekstur dan detail lokal paling alami serta FID terbaik (28{,}0). Dari sisi keragaman, keempat model menutup 10 kelas hampir merata (coverage 0{,}990--0{,}998), sehingga tidak ada mode collapse tingkat kelas.}
+\newcommand{\TrilemmaText}{Generative trilemma (Xiao dkk., 2022) menyatakan bahwa sulit mendapatkan sekaligus kualitas sampel tinggi, sampling cepat, dan mode coverage. Hasil kami mengonfirmasinya. VAE: cepat (0{,}18 ms/64) dan coverage tinggi, tetapi kualitas rendah (FID 89{,}2). DCGAN: cepat (22{,}19 ms/64) dan berkualitas (FID 31{,}9); coverage tingkat kelas baik, tetapi secara teoretis rentan mode dropping karena divergensi mode-seeking dan tidak memiliki likelihood untuk memverifikasinya. DDPM: coverage dijamin oleh objektif likelihood-bound dan FID 28{,}0, tetapi sampling 1000 langkah butuh 93{,}8 detik per batch 64, yaitu 4227$\times$ lebih lambat daripada DCGAN. Latensi DDPM berbanding lurus dengan jumlah langkah $T$; inilah harga dari kestabilan dan coverage.}
+\newcommand{\AvatarText}{Latensi per citra (batch 1, CPU 2 thread) adalah VAE 0{,}04 ms, Vanilla GAN 0{,}21 ms, dan DCGAN 1{,}60 ms; untuk batch 64 masing-masing 0{,}18, 1{,}20, dan 22{,}19 ms. Ketiganya jauh di bawah anggaran 30 ms karena sama-sama single-pass, sedangkan DDPM (sekitar 1466 ms per citra) mustahil dipakai. Di antara kandidat yang memenuhi latensi, DCGAN memberi kualitas terbaik (FID 31{,}9 vs VAE 89{,}2 dan Vanilla GAN 124{,}6). Konvolusi juga lebih ramah akselerator mobile (NPU/GPU) dan parameternya dapat dikuantisasi. Vanilla GAN tidak direkomendasikan karena artefak bintiknya sangat terlihat pada wajah/avatar. VAE cocok bila yang dibutuhkan adalah kontrol laten yang halus (misalnya slider atribut), dengan konsekuensi hasil lebih buram. Untuk produk nyata, generator DCGAN perlu dikondisikan pada citra input (image-to-image).}
 \newcommand{\CreativeChoice}{DDPM}
-\newcommand{\CreativeText}{DDPM memberi FID terbaik (25{,}0 vs DCGAN 31{,}9) walaupun hanya dilatih 12 epoch di CPU, dengan loss yang turun monoton tanpa tuning keseimbangan $G$/$D$. Untuk aset beresolusi dan berfidelitas tinggi, faktor penentunya adalah inductive bias dan skalabilitas. DDPM memecah generasi menjadi ratusan langkah denoising kecil yang masing-masing merupakan regresi stabil, sehingga mudah diskalakan ke resolusi dan kapasitas besar, menutup seluruh mode data, serta mendukung conditioning (teks, inpainting, guidance). DCGAN pada resolusi tinggi terkenal sulit distabilkan dan rentan mode dropping. Latensi sampling yang tinggi tidak kritis dalam pipeline kreatif offline, dan dapat dipangkas dengan sampler yang lebih sedikit langkahnya (misalnya DDIM).}
-\newcommand{\ABSTRAK}{Pada rekonstruksi, Vanilla AE unggul (PSNR 22{,}98 dB) atas Sparse AE dan VAE. Pada generasi, urutan FID adalah DDPM (25{,}0) $<$ DCGAN (31{,}9) $<$ VAE (89{,}2) $<$ Vanilla GAN (124{,}6). DDPM paling stabil dilatih tetapi sampling-nya 100000$\times$ lebih lambat daripada DCGAN. MLP Classifier (akurasi test 88{,}93\%) terbukti tidak dapat dipakai untuk generasi: proyeksi transpos bobot menghasilkan SSIM 0{,}066, frozen decoder hanya mencapai PSNR 18{,}31 dB (AE 22{,}98 dB), dan sampling laten menghasilkan FID 149{,}1.}
+\newcommand{\CreativeText}{DDPM memberi FID terbaik (28{,}0 vs DCGAN 31{,}9) walaupun hanya dilatih 12 epoch di CPU, dengan loss yang turun monoton tanpa tuning keseimbangan $G$/$D$. Untuk aset beresolusi dan berfidelitas tinggi, faktor penentunya adalah inductive bias dan skalabilitas. DDPM memecah generasi menjadi ratusan langkah denoising kecil yang masing-masing merupakan regresi stabil, sehingga mudah diskalakan ke resolusi dan kapasitas besar, menutup seluruh mode data, serta mendukung conditioning (teks, inpainting, guidance). DCGAN pada resolusi tinggi terkenal sulit distabilkan dan rentan mode dropping. Latensi sampling yang tinggi tidak kritis dalam pipeline kreatif offline, dan dapat dipangkas dengan sampler yang lebih sedikit langkahnya (misalnya DDIM).}
+\newcommand{\ABSTRAK}{Pada rekonstruksi, Vanilla AE unggul (PSNR 22{,}98 dB) atas Sparse AE dan VAE. Pada generasi, urutan FID adalah DDPM (28{,}0) $<$ DCGAN (31{,}9) $<$ VAE (89{,}2) $<$ Vanilla GAN (124{,}6). DDPM paling stabil dilatih tetapi sampling-nya 4227$\times$ lebih lambat daripada DCGAN. MLP Classifier (akurasi test 88{,}93\%) terbukti tidak dapat dipakai untuk generasi: proyeksi transpos bobot menghasilkan SSIM 0{,}066, frozen decoder hanya mencapai PSNR 18{,}31 dB (AE 22{,}98 dB), dan sampling laten menghasilkan FID 149{,}1.}
