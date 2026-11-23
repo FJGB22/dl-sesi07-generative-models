@@ -9,12 +9,13 @@ Baris: ground truth, Vanilla AE, Sparse AE, VAE (decode $\mu$).}
 \end{figure}
 
 \textbf{Analisis Figur 1.} Ketiga model mempertahankan siluet global, tetapi berbeda pada detail frekuensi tinggi.
-Vanilla AE (kode padat, semua 64 unit aktif) paling banyak mempertahankan pola lokal---garis tali sandal, motif kaos,
-dan tepi sepatu---sehingga SSIM-nya tertinggi (\SSIMAE). Sparse AE hanya mengaktifkan $\approx$\ACTSAE\ unit per citra:
+Vanilla AE (kode padat, semua 64 unit aktif) paling banyak mempertahankan pola lokal---tali sandal, garis vertikal pada coat, dan sol sneaker---sehingga SSIM-nya tertinggi (\SSIMAE). Sparse AE hanya mengaktifkan $\approx$\ACTSAE\ unit per citra:
 kode berperilaku seperti kombinasi sedikit ``bagian'' (\emph{parts}) sehingga motif halus diganti tekstur generik dan
 tepi sedikit melunak (SSIM \SSIMSAE). VAE paling buram (SSIM \SSIMVAE): selain loss piksel, suku KL memaksa posterior
 $q(z|x)$ tiap citra melebar dan saling tumpang tindih, sehingga decoder belajar mengeluarkan rata-rata dari beberapa citra
-yang berbagi wilayah laten yang sama. Detail seperti tulisan pada tas dan pola kotak-kotak hilang paling dulu.
+yang berbagi wilayah laten yang sama; tali sandal nyaris lenyap dan permukaan pakaian menjadi bidang rata. Tulisan pada tas
+hilang di ketiga model---detail unik per citra semacam ini melampaui kapasitas kode 64 dimensi---namun Vanilla AE masih
+menyisakan tekstur di area tersebut, sedangkan VAE menggantinya dengan bidang abu-abu halus.
 
 \begin{figure}[H]
 \centering\includegraphics[width=\linewidth]{../outputs/figures/fig2_sampling.png}

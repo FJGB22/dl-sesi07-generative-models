@@ -1,0 +1,116 @@
+\section{Bagian VI --- Pembahasan Kritis, Jawaban Pertanyaan Penelitian, dan Rekomendasi}
+
+\subsection*{Q1 --- Reconstruction fidelity vs generative quality}
+\textbf{Rekonstruksi.} Urutan fidelitas pada test set adalah Vanilla AE (MSE \MSEAE, PSNR \PSNRAE\ dB, SSIM \SSIMAE)
+$>$ Sparse AE (\MSESAE; \PSNRSAE\ dB; \SSIMSAE) $>$ VAE (\MSEVAE; \PSNRVAE\ dB; \SSIMVAE). Penalti $\lambda\lVert h\rVert_1$
+menurunkan PSNR sekitar \PSNRdropSAE\ dB karena memaksa trade-off: setiap unit yang aktif ``membayar'' biaya $\lambda$, sehingga
+optimum menutup unit dengan kontribusi rekonstruksi kecil (hanya \ACTSAE\ dari 64 unit aktif per citra, \DEADSAE\ unit tidak
+pernah aktif). Kapasitas efektif kode turun, dan detail halus---yang hanya sedikit menurunkan MSE---adalah yang pertama
+dikorbankan. Vanilla AE tidak memiliki biaya tersebut sehingga memakai seluruh 64 dimensi secara padat. VAE paling rendah
+karena ELBO menyeimbangkan rekonstruksi dengan KL ($\approx$\KLVAE\ nat/sampel): kode dibuat berderau dan ditarik ke
+$\mathcal{N}(0,I)$, sehingga informasi yang bisa dibawa $z$ dibatasi (rate--distortion).
+
+\textbf{Generasi dari prior.} \QoneFID\ Urutan ini terbalik dibandingkan rekonstruksi: VAE kalah dalam fidelitas tetapi
+merupakan satu-satunya autoencoder yang dapat disampling. Vanilla AE yang disampling dengan Gaussian-fit mendapat FID
+\FIDaegauss\ (Sparse AE \FIDsaegauss), jauh lebih buruk dari VAE, karena kode AE tidak pernah dipaksa mengisi prior.
+
+\subsection*{Q2 --- Blurriness vs sharp edges dan representasi fitur}
+Untuk decoder deterministik $\hat{x}=g(z)$, minimisasi MSE memiliki solusi optimal $g^*(z)=\mathbb{E}[x\mid z]$.
+Jika satu $z$ bersesuaian dengan beberapa citra yang mungkin (karena bottleneck 64-d membuang sebagian informasi, atau karena
+derau posterior VAE), decoder optimal mengeluarkan \emph{rata-rata} mereka. Rata-rata beberapa tepi yang sedikit bergeser
+adalah gradasi lembut, yaitu blur. BCE pada VAE berperilaku sama karena estimasi maksimum likelihood Bernoulli per piksel
+juga menghasilkan $\mathbb{E}[x_j\mid z]$, dan likelihood yang faktorial per piksel tidak dapat menyatakan bahwa ``tepi ada di
+posisi A \emph{atau} B, bukan setengah di keduanya''. GAN tidak memiliki target piksel: generator dihukum jika $D$ dapat
+membedakan $G(z)$ dari data, sehingga meminimalkan (secara aproksimasi) $D_{\text{JS}}(p_{\text{data}}\Vert p_g)$. Citra rata-rata
+yang buram berada di luar support $p_{\text{data}}$, sehingga mudah dikenali $D$. Divergensi ini \emph{mode-seeking}: generator
+didorong memilih satu mode yang tajam daripada rata-rata banyak mode. Inilah sebabnya DCGAN menghasilkan kontur tajam
+(Gambar~\ref{fig:samples}C). Vanilla GAN memang tajam, tetapi derau bintiknya menunjukkan sisi lain: $D$ berbasis MLP tidak
+dapat mendeteksi inkonsistensi lokal antarpiksel, sehingga $G$ tidak pernah dihukum karenanya (lihat Q3).
+
+\textbf{Struktur fitur Sparse AE vs Vanilla AE.} Pada Vanilla AE, \ZFAE\ komponen kode bernilai nol (kode linear, padat):
+setiap citra dikodekan sebagai kombinasi \emph{semua} arah laten, dan informasi tersebar (\emph{distributed}). Pada Sparse AE,
+\ZFSAE\ komponen bernilai nol eksak. Setiap citra hanya memakai $\approx$\ACTSAE\ unit, sehingga unit cenderung terspesialisasi
+menjadi detektor ``bagian'' (siluet atasan, sol sepatu, pegangan tas) yang dapat dijumlahkan. Representasi ini lebih mudah
+diinterpretasi dan lebih tahan derau, tetapi dengan bottleneck 64 dimensi biaya fidelitasnya terlihat jelas pada Q1.
+
+\subsection*{Q3 --- Stabilitas training, dinamika arsitektur, dan Generative Trilemma}
+\textbf{Vanilla GAN vs DCGAN.} Secara teori, minimax asli menyebabkan \emph{vanishing gradient}: jika $D$ terlalu kuat,
+$D(G(z))\to0$ dan $\nabla_G\log(1-D(G(z)))\to0$. Selain itu, jika support $p_g$ dan $p_{\text{data}}$ hampir tidak beririsan,
+$D_{\text{JS}}$ jenuh di $\log2$ dan tidak memberi arah. \emph{Mode collapse} terjadi ketika $G$ menemukan satu keluaran
+yang menipu $D$ saat itu dan memetakan banyak $z$ ke sana. Dalam eksperimen ini, kedua GAN memakai loss non-saturating dan
+Adam $\beta_1=0{,}5$. Hasilnya, \textbf{tidak ada mode collapse tingkat kelas}: coverage Vanilla GAN \COVGAN\ dan DCGAN \COVDCGAN,
+setara citra riil (\COVreal). Kegagalan Vanilla GAN muncul dalam bentuk lain, yaitu \emph{equilibrium semu}: $D(x)$ dan
+$D(G(z))$ mendekati 0,5 (\DRGAN/\DFGAN) dan norma gradien $G$ menurun dari \GNGANfirst\ menjadi \GNGANlast, padahal sampel
+masih berbintik (FID \FIDGAN). $D$ berbasis MLP memperlakukan 784 piksel sebagai vektor tanpa struktur spasial, sehingga
+$D$ tidak dapat membedakan derau lokal. Akibatnya sinyal gradien ke $G$ melemah sebelum kualitas tercapai; ini adalah bentuk
+praktis \emph{vanishing learning signal}. DCGAN memitigasinya melalui prinsip Radford dkk.:
+(1) konvolusi berbagi bobot dan lokal, sehingga $D$ peka terhadap tepi dan tekstur, dan $G$ menghasilkan piksel tetangga yang
+berkorelasi; (2) strided (transposed) convolution tanpa pooling; (3) BatchNorm di $G$ dan $D$ yang menstabilkan skala aktivasi
+dan aliran gradien; (4) ReLU di $G$ dan LeakyReLU di $D$ sehingga gradien tidak mati; (5) inisialisasi $\mathcal{N}(0;0{,}02)$.
+Hasilnya FID turun \GANoverDCGAN$\times$ (\FIDGAN$\to$\FIDDCGAN). Menariknya, loss $G$ per iterasi DCGAN justru lebih fluktuatif
+(std \GSTDDCGAN\ vs \GSTDGAN). Osilasi ini tanda $D$ yang \emph{informatif}, bukan ketidakstabilan, sehingga kurva loss GAN tidak
+dapat dipakai sebagai indikator kualitas.
+
+\textbf{GAN vs DDPM.} DDPM meminimalkan regresi MSE terhadap target tetap $\varepsilon$ untuk $t$ acak. Objektifnya adalah
+masalah optimasi tunggal (bukan permainan dua pemain) dan landskapnya tidak berubah selama training. Kurva loss DDPM turun
+monoton tanpa osilasi (\DDPMfirst$\to$\DDPMlast), dan val loss ber-EMA mengikuti train loss.
+
+\textbf{Trilemma.} \TrilemmaText
+
+\subsection*{Q4 --- Struktur latent space dan interpolasi}
+Seperti terlihat pada Gambar~\ref{fig:interp}, Vanilla AE dan Sparse AE menghasilkan \emph{ghosting}: superposisi celana dan tas
+pada $\alpha=0{,}4$--$0{,}6$, dengan artefak pita dan bercak. Penyebabnya, objektif rekonstruksi hanya peduli pada titik-titik
+$f(x_i)$ yang dilihat saat training. Kode dari kelas berbeda tersebar di klaster yang terpisah, dan ruang di antaranya tidak pernah
+diberi makna (\emph{latent voids}). Decoder ReLU berperilaku piecewise-linear di wilayah tersebut, sehingga keluarannya mendekati
+campuran linear dua citra. Pada Sparse AE, efeknya lebih kuat (rasio jarak ke kode terdekat \VOIDSAE\ vs \VOIDAE) karena kode jarang
+hidup di sumbu-sumbu ``orthant'' yang berbeda per kelas; garis lurus antara dua kode dengan pola aktif berbeda melewati kombinasi unit
+yang tidak pernah aktif bersamaan. VAE mengatasi ini secara struktural. Pertama, derau reparameterisasi melatih decoder pada
+\emph{seluruh lingkungan} $\mathcal{N}(\mu,\sigma^2)$, bukan satu titik. Kedua, suku KL menarik semua posterior ke prior yang sama,
+sehingga lingkungan kode yang berbeda saling bertumpang tindih dan mengisi celah. Hasilnya adalah manifold yang kontinu:
+interpolasi melewati pakaian yang valid (atasan berlengan) dengan rasio jarak terkecil (\VOIDVAE). GAN dan DCGAN juga mulus
+karena $G$ didefinisikan pada seluruh prior $\mathcal{N}(0,I)$; titik tengah garis lurus masih berada di massa prior, dan $G$ dilatih
+agar setiap titik di sana menghasilkan citra yang dinilai riil oleh $D$.
+
+\subsection*{Q5 --- Mengapa bobot dan fitur laten MLP Classifier tidak dapat langsung men-generate citra}
+Ketiga jalur pada Bagian III gagal karena tiga alasan yang saling menguatkan. \textbf{(a) $P(y|x)$:} Cross-Entropy hanya menuntut
+$z_{\text{MLP}}$ cukup untuk $y$. Hal ini terlihat dari frozen decoder: akurasi klasifikasi rekonstruksinya (\FdAcc\%) setara AE
+(\AeAcc\%), tetapi varians intra-kelas tinggal \FdVar\ (AE \AeVar), dan tulisan, motif, serta pola hilang (Gambar~\ref{fig:mlp}, baris 3).
+Informasi yang tidak relevan untuk label telah dibuang dan tidak dapat dipulihkan oleh decoder apa pun.
+\textbf{(b) $W^{\top}W\neq I$:} $W_1$ berukuran 256$\times$784 memiliki ruang nol 528 dimensi dan $\lVert W_1^{\top}W_1-I\rVert_F/\lVert I\rVert_F=\WoneOrth$.
+Transpos hanya memproyeksikan balik ke ruang baris, tanpa skala yang benar, sehingga pra-aktivasi Sigmoid membesar dan citra jenuh
+menjadi pola biner acak (SSIM \TthreeSSIM). Pseudo-invers pun gagal (SSIM \TpinvSSIM) karena ReLU telah membuang \ReluOne\ dan \ReluTwo\
+informasi tanda secara ireversibel. \textbf{(c) Tanpa $P(z)$:} ruang laten MLP berbentuk klaster per kelas dengan \ZeroFrac\ nol
+eksak. Gaussian diagonal menempatkan sampel \NNratio$\times$ lebih jauh dari data dibanding kode riil dan menghasilkan FID \FIDmlp.
+Dengan demikian, mengubah classifier menjadi generator memerlukan objektif baru yang memodelkan $p(x)$ (rekonstruksi untuk
+informasi, KL/adversarial/difusi untuk densitas); arsitektur yang mirip saja tidak cukup.
+
+\subsection*{Q6 --- Sintesis rekayasa dan rekomendasi industri}
+\textbf{(1) Deteksi anomali inspeksi manufaktur: Vanilla AE.} Pada eksperimen proxy, setiap citra test diberi cacat sintetis
+(bercak 5$\times$5 atau goresan; \texttt{src/anomaly\_proxy.py}), dan galat rekonstruksi dipakai sebagai skor anomali.
+Vanilla AE mencapai AUROC \AUCAE\ vs Sparse AE \AUCSAE. Sparse AE sebenarnya lebih ``menolak'' menyalin cacat (galat di piksel
+cacat \FIXSAE\ vs \FIXAE), tetapi galat dasar pada citra normal juga lebih tinggi dan lebih bervariasi (\ERRNSAE\ vs \ERRNAE),
+sehingga margin antara normal dan cacat lebih sempit. Rekomendasinya adalah Vanilla AE dengan skor galat per citra; Sparse AE layak
+dipertimbangkan bila yang dipakai adalah \emph{peta} galat terlokalisasi atau bila data normal sangat bervariasi. Keduanya perlu
+dilatih hanya pada citra normal, dengan ambang dikalibrasi pada data validasi.
+
+\textbf{(2) Filter avatar real-time di mobile ($<$30 ms): DCGAN.} \AvatarText
+
+\textbf{(3) Aset visual fidelitas tinggi untuk industri kreatif: \CreativeChoice.} \CreativeText
+
+\subsection*{Keterbatasan}
+Eksperimen dijalankan pada CPU 2-core, sehingga DDPM hanya dilatih 12 epoch dengan U-Net 1,25 M parameter dan GAN/DCGAN
+dengan 50/20 epoch. Model dan durasi yang lebih besar (khususnya untuk DDPM) diperkirakan memperlebar jarak kualitas. FID dihitung
+dengan 2.000 sampel. Coverage diukur pada tingkat kelas memakai MLP Classifier sendiri, sehingga collapse di dalam satu kelas tidak
+terdeteksi. Eksperimen anomali memakai cacat sintetis, bukan data pabrik nyata.
+
+\subsection*{Referensi}
+{\small
+[1] Kingma \& Welling (2014). Auto-Encoding Variational Bayes. ICLR. \;
+[2] Goodfellow dkk. (2014). Generative Adversarial Nets. NeurIPS. \;
+[3] Radford, Metz \& Chintala (2016). Unsupervised Representation Learning with DCGANs. ICLR. \;
+[4] Ho, Jain \& Abbeel (2020). Denoising Diffusion Probabilistic Models. NeurIPS. \;
+[5] Ng (2011). Sparse Autoencoder. CS294A Lecture Notes, Stanford. \;
+[6] Heusel dkk. (2017). GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium (FID). NeurIPS. \;
+[7] Xiao, Rasul \& Vollgraf (2017). Fashion-MNIST. arXiv:1708.07747. \;
+[8] Tishby, Pereira \& Bialek (2000). The Information Bottleneck Method. arXiv:physics/0004057. \;
+[9] Xiao, Kreis \& Vahdat (2022). Tackling the Generative Learning Trilemma with Denoising Diffusion GANs. ICLR.}

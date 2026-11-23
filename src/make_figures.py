@@ -93,7 +93,10 @@ def fig1_recon(ms, Xte, yte, M):
             r = M["recon"][k]
             lab = f"{lab}\nMSE {r['mse']:.4f} | SSIM {r['ssim']:.3f}"
         row_axes(ax, grid(im, 1), lab)
-    axs[0].set_title("  ".join(c.split("/")[0] for c in CLASSES), fontsize=6.8)
+    axs[0].xaxis.tick_top()
+    axs[0].set_xticks([14.5 + 29 * i for i in range(10)])
+    axs[0].set_xticklabels([c.split("/")[0] for c in CLASSES], fontsize=6.8)
+    axs[0].tick_params(length=0)
     fig.savefig(os.path.join(FIG, "fig1_rekonstruksi.png"))
     plt.close(fig)
 

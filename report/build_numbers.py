@@ -37,6 +37,7 @@ def main():
         "MLPacc": pct(E["stage1"]["test_acc"]),
         "WoneOrth": f(E["weights"]["W1"]["rel_fro_WtW_minus_I"], 1),
         "WoneCond": f(E["weights"]["W1"]["cond"], 1),
+        "WoneSVmax": f(E["weights"]["W1"]["sv_max"], 1),
         "ReluOne": pct(E["relu_zeroed_frac"]["layer1"], 1) + "\\%",
         "ReluTwo": pct(E["relu_zeroed_frac"]["layer2"], 1) + "\\%",
         "ZeroFrac": pct(s5["latent_zero_frac"], 1) + "\\%",
@@ -128,10 +129,78 @@ def main():
         m[f"ERRN{K}"] = f(A[k]["err_normal"], 4)
         m[f"ERRD{K}"] = f(A[k]["err_defect"], 4)
         m[f"FIX{K}"] = f(A[k]["err_on_defect_pixels"], 3)
+    m["PSNRdropSAE"] = f(M["recon"]["ae"]["psnr"] - M["recon"]["sae"]["psnr"], 1)
+    hv = R("history_vae.json")
+    m["KLVAE"] = f(hv["parts"][-1]["kl"], 1)
+    m["GANoverDCGAN"] = f(M["fid"]["gan"] / M["fid"]["dcgan"], 1)
     hd = R("history_ddpm.json")
     m["DDPMfirst"] = f(hd["train"][0], 4)
     m["DDPMlast"] = f(hd["train"][-1], 4)
     m["DDPMval"] = f(hd["val"][-1], 4)
+    # ---- teks bersyarat yang bergantung pada hasil (ditulis dari angka, bukan asumsi)
+    fid = M["fid"]
+    lat = M["latency_ms_batch64"]
+    b1 = M["latency_ms_batch1"]
+    order = sorted(["vae", "gan", "dcgan", "ddpm"], key=lambda k: fid[k])
+    nm = {"vae": "VAE", "gan": "Vanilla GAN", "dcgan": "DCGAN", "ddpm": "DDPM"}
+    order_txt = " $<$ ".join(f"{nm[k]} ({f(fid[k], 1)})" for k in order)
+    ddpm_best = fid["ddpm"] < fid["dcgan"]
+    cov = M["coverage"]
+    m["QoneFID"] = (f"FID dari prior $\\mathcal{{N}}(0,I)$ (makin kecil makin baik) berurutan: {order_txt}; "
+                    f"sebagai batas bawah, FID antara dua himpunan citra riil adalah {f(fid['real_val_vs_test'], 1)}.")
+    m["FigTwoText"] = (
+        "Sampel VAE (A) memiliki siluet benar dan beragam tetapi buram serta kontrasnya rendah: decoder mengeluarkan "
+        "$\\mathbb{E}[x|z]$ sehingga tekstur kain hilang. Vanilla GAN (B) menghasilkan siluet tajam dan berkontras tinggi, "
+        "tetapi setiap piksel berbintik seperti derau garam-merica, karena generator FC tidak memiliki bias korelasi spasial antarpiksel; "
+        f"inilah sebabnya FID-nya ({f(fid['gan'], 1)}) bahkan lebih buruk daripada VAE ({f(fid['vae'], 1)}). DCGAN (C) menghasilkan kontur "
+        "bersih, permukaan halus, dan detail seperti tali tas serta sol sepatu. DDPM (D) menghasilkan "
+        + ("sampel dengan tekstur dan detail lokal paling alami serta FID terbaik "
+           if ddpm_best else "sampel dengan tekstur yang alami, namun FID-nya masih di atas DCGAN ")
+        + f"({f(fid['ddpm'], 1)}). Dari sisi keragaman, keempat model menutup 10 kelas hampir merata "
+        f"(coverage {f(cov['vae']['norm_class_entropy'], 3)}--{f(max(cov[k]['norm_class_entropy'] for k in ('gan', 'dcgan', 'ddpm')), 3)}), "
+        "sehingga tidak ada mode collapse tingkat kelas.")
+    m["TrilemmaText"] = (
+        "Generative trilemma (Xiao dkk., 2022) menyatakan bahwa sulit mendapatkan sekaligus kualitas sampel tinggi, sampling cepat, "
+        "dan mode coverage. Hasil kami mengonfirmasinya. VAE: cepat "
+        f"({f(lat['vae'][0], 2)} ms/64) dan coverage tinggi, tetapi kualitas rendah (FID {f(fid['vae'], 1)}). "
+        f"DCGAN: cepat ({f(lat['dcgan'][0], 2)} ms/64) dan berkualitas (FID {f(fid['dcgan'], 1)}); coverage tingkat kelas baik, "
+        "tetapi secara teoretis rentan mode dropping karena divergensi mode-seeking dan tidak memiliki likelihood untuk memverifikasinya. "
+        f"DDPM: coverage dijamin oleh objektif likelihood-bound dan FID {f(fid['ddpm'], 1)}, tetapi sampling 1000 langkah butuh "
+        f"{f(lat['ddpm'][0] / 1000, 1)} detik per batch 64, yaitu {m['DDPMxGAN']}$\\times$ lebih lambat daripada DCGAN. "
+        "Latensi DDPM berbanding lurus dengan jumlah langkah $T$; inilah harga dari kestabilan dan coverage.")
+    best_rt = min(("vae", "gan", "dcgan"), key=lambda k: b1[k][0])
+    m["AvatarText"] = (
+        f"Latensi per citra (batch 1, CPU 2 thread) adalah VAE {f(b1['vae'][0], 2)} ms, Vanilla GAN {f(b1['gan'][0], 2)} ms, "
+        f"dan DCGAN {f(b1['dcgan'][0], 2)} ms; untuk batch 64 masing-masing {f(lat['vae'][0], 2)}, {f(lat['gan'][0], 2)}, "
+        f"dan {f(lat['dcgan'][0], 2)} ms. Ketiganya jauh di bawah anggaran 30 ms karena sama-sama single-pass, sedangkan DDPM "
+        f"(~{f(lat['ddpm'][0] / 64, 0)} ms per citra) mustahil dipakai. Di antara kandidat yang memenuhi latensi, DCGAN memberi kualitas "
+        f"terbaik (FID {f(fid['dcgan'], 1)} vs VAE {f(fid['vae'], 1)} dan Vanilla GAN {f(fid['gan'], 1)}). Konvolusi juga lebih ramah "
+        "akselerator mobile (NPU/GPU) dan parameternya dapat dikuantisasi. Vanilla GAN tidak direkomendasikan karena artefak bintiknya "
+        "sangat terlihat pada wajah/avatar. VAE cocok bila yang dibutuhkan adalah kontrol laten yang halus (misalnya slider atribut), "
+        "dengan konsekuensi hasil lebih buram. Untuk produk nyata, generator DCGAN perlu dikondisikan pada citra input (image-to-image).")
+    if ddpm_best:
+        m["CreativeChoice"] = "DDPM"
+        m["CreativeText"] = (
+            f"DDPM memberi FID terbaik ({f(fid['ddpm'], 1)} vs DCGAN {f(fid['dcgan'], 1)}) walaupun hanya dilatih 12 epoch di CPU, "
+            "dengan loss yang turun monoton tanpa tuning keseimbangan $G$/$D$. ")
+    else:
+        m["CreativeChoice"] = "DDPM (dengan catatan)"
+        m["CreativeText"] = (
+            f"Pada skala eksperimen ini, DCGAN masih unggul dalam FID ({f(fid['dcgan'], 1)} vs DDPM {f(fid['ddpm'], 1)}) karena DDPM "
+            "hanya dilatih 12 epoch dengan U-Net 1,25 M parameter di CPU. Namun kurva loss DDPM masih turun ketika training dihentikan, "
+            "sedangkan GAN sudah mencapai equilibrium. ")
+    m["CreativeText"] += (
+        "Untuk aset beresolusi dan berfidelitas tinggi, faktor penentunya adalah inductive bias dan skalabilitas. DDPM memecah generasi "
+        "menjadi ratusan langkah denoising kecil yang masing-masing merupakan regresi stabil, sehingga mudah diskalakan ke resolusi dan "
+        "kapasitas besar, menutup seluruh mode data, serta mendukung conditioning (teks, inpainting, guidance). DCGAN pada resolusi tinggi "
+        "terkenal sulit distabilkan dan rentan mode dropping. Latensi sampling yang tinggi tidak kritis dalam pipeline kreatif offline, "
+        "dan dapat dipangkas dengan sampler yang lebih sedikit langkahnya (misalnya DDIM).")
+    m["ABSTRAK"] = (
+        f"Pada rekonstruksi, Vanilla AE unggul (PSNR {f(M['recon']['ae']['psnr'])} dB) atas Sparse AE dan VAE. Pada generasi, urutan FID "
+        f"adalah {order_txt}. DDPM paling stabil dilatih tetapi sampling-nya {m['DDPMxGAN']}$\\times$ lebih lambat daripada DCGAN. "
+        f"MLP Classifier (akurasi test {pct(E['stage1']['test_acc'])}\\%) terbukti tidak dapat dipakai untuk generasi: "
+        f"proyeksi transpos bobot menghasilkan SSIM {f(E['stage3']['transpose']['ssim'], 3)}, frozen decoder hanya mencapai "
+        f"PSNR {f(fd['psnr'])} dB (AE {f(ae['psnr'])} dB), dan sampling laten menghasilkan FID {f(fid['mlp_latent'], 1)}.")
     out = "\n".join(f"\\newcommand{{\\{k}}}{{{v}}}" for k, v in m.items())
     open(os.path.join(ROOT, "report", "numbers.tex"), "w").write(out + "\n")
     print(f"{len(m)} macro ditulis ke report/numbers.tex")
