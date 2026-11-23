@@ -39,12 +39,13 @@ class Decoder(nn.Module):
 
 
 class VanillaAE(nn.Module):
-    """L = ||x - x_hat||^2 (MSE). Kode laten ReLU 64-d, sama seperti Sparse AE,
-    sehingga satu-satunya beda dengan Sparse AE adalah penalti L1."""
+    """L = ||x - x_hat||^2 (MSE). Kode laten 64-d linear (padat / dense).
+    Catatan: uji awal dengan kode ReLU tanpa penalti menghasilkan ~20/64 unit mati,
+    sehingga Vanilla AE memakai kode linear agar seluruh kapasitas laten terpakai."""
 
-    def __init__(self):
+    def __init__(self, code_act=False):
         super().__init__()
-        self.enc, self.dec = Encoder(), Decoder()
+        self.enc, self.dec = Encoder(code_act=code_act), Decoder()
 
     def encode(self, x):
         return self.enc(x)
@@ -63,10 +64,12 @@ class VanillaAE(nn.Module):
 
 
 class SparseAE(VanillaAE):
-    """L = MSE(x, x_hat) + lambda * ||h||_1 (rata-rata per sampel)."""
+    """L = MSE(x, x_hat) + lambda * ||h||_1 (rata-rata per sampel).
+    Kode laten memakai ReLU agar penalti L1 menghasilkan nol eksak (aktivasi jarang).
+    lambda = 1e-4 dipilih dari uji 3 epoch: 1e-3 membuat semua unit mati (kolaps)."""
 
-    def __init__(self, lam=1e-3):
-        super().__init__()
+    def __init__(self, lam=1e-4):
+        super().__init__(code_act=True)
         self.lam = lam
 
     def loss(self, x):

@@ -28,7 +28,7 @@ def build(name):
     if name == "ae":
         return VanillaAE()
     if name == "sae":
-        return SparseAE(lam=1e-3)
+        return SparseAE(lam=1e-4)
     if name == "vae":
         return VAE()
     if name == "ddpm":
